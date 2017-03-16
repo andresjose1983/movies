@@ -41,7 +41,7 @@ public final class RestClient {
      * @return Call<MovieResponse>
      */
     public static Call<MovieResponse> getMoviesByTopRated(){
-        return mIClient.getMoviesByPopular(BuildConfig.API_KEY);
+        return mIClient.getMoviesByTopRated(BuildConfig.API_KEY);
     }
 
     /**
@@ -49,7 +49,7 @@ public final class RestClient {
      * @return Call<MovieResponse>
      */
     public static Call<MovieResponse> getMoviesByUpcoming(){
-        return mIClient.getMoviesByPopular(BuildConfig.API_KEY);
+        return mIClient.getMoviesByUpcoming(BuildConfig.API_KEY);
     }
 
 }
