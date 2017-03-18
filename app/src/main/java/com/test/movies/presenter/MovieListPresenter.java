@@ -38,6 +38,7 @@ public class MovieListPresenter implements MoviesListContract.Presenter {
      */
     @Override
     public void onSuccess(List<MovieResponse> movieResponses) {
+
         mView.showMovies(movieResponses);
     }
 
