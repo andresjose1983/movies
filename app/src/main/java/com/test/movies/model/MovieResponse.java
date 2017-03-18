@@ -12,6 +12,8 @@ public class MovieResponse implements Serializable {
 
     private List<Movie> results = new ArrayList<>();
 
+    private Genre genre;
+
     public MovieResponse() {
     }
 
@@ -23,4 +25,15 @@ public class MovieResponse implements Serializable {
         return results;
     }
 
+    public void setResults(List<Movie> results) {
+        this.results = results;
+    }
+
+    public Genre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+    }
 }
