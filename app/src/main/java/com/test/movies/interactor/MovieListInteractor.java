@@ -7,9 +7,10 @@ import com.test.movies.model.Genre;
 import com.test.movies.model.MovieResponse;
 import com.test.movies.util.util.RestClient;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by andres on 18/03/17.
@@ -54,23 +55,27 @@ public class MovieListInteractor {
 
     /**
      * Call server resource common
+     *
+     * @param genre
+     * @param movies
      */
-    private void call(final Genre genre, Call<MovieResponse> movies){
-        movies.enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                if (mIListener != null) {
-                    MovieResponse body = response.body();
-                    body.setGenre(genre);
-                    mIListener.onSuccess(body);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
-                if (mIListener != null)
-                    mIListener.onFailure(t.getMessage());
-            }
-        });
+    private void call(final Genre genre, Observable<MovieResponse> movies) {
+        movies.observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<MovieResponse>() {
+                    @Override
+                    public void call(MovieResponse movieResponse) {
+                        if (mIListener != null) {
+                            movieResponse.setGenre(genre);
+                            mIListener.onSuccess(movieResponse);
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        if (mIListener != null)
+                            mIListener.onFailure(throwable.getMessage());
+                    }
+                });
     }
 }
