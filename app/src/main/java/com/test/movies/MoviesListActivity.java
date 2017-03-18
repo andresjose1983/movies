@@ -1,13 +1,18 @@
 package com.test.movies;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.test.movies.contract.MoviesListContract;
 import com.test.movies.model.MovieResponse;
 import com.test.movies.presenter.MovieListPresenter;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -15,6 +20,9 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
 
     @BindView(R.id.rvMovie)
     RecyclerView mRvMovie;
+
+    @BindView(R.id.srlMovie)
+    SwipeRefreshLayout mSrlMovie;
 
     private MovieListPresenter mMovieListPresenter;
 
@@ -27,18 +35,17 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
 
         mMovieListPresenter = new MovieListPresenter(this);
 
-        mMovieListPresenter.getMoviesByPopular();
-        mMovieListPresenter.getMoviesByUpcoming();
-        mMovieListPresenter.getMoviesByTopRated();
+        mMovieListPresenter.call();
     }
 
     @Override
-    public void showMovies(MovieResponse movieResponse) {
-        Log.d("Hola", movieResponse.toString());
+    public void showMovies(List<MovieResponse> movieResponses) {
+        Log.d("Hola", movieResponses.toString());
     }
 
     /**
      * Show error message
+     *
      * @param error
      */
     @Override
@@ -46,8 +53,27 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
-    private void init() {
+    /**
+     * show sipe refresh
+     */
+    @Override
+    public void showSwipe() {
+        mSrlMovie.setRefreshing(true);
+    }
 
+    /**
+     * Hide sipe refresh
+     */
+    @Override
+    public void hideSwipe() {
+        mSrlMovie.setRefreshing(false);
+    }
+
+    /**
+     * Init widget
+     */
+    private void init() {
+        mSrlMovie.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
     }
 
 }

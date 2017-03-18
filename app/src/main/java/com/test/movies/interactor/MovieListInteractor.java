@@ -4,12 +4,12 @@ import com.test.movies.MovieApp;
 import com.test.movies.R;
 import com.test.movies.contract.MoviesListContract;
 import com.test.movies.model.Genre;
-import com.test.movies.model.MovieResponse;
 import com.test.movies.util.util.RestClient;
+
+import java.util.Arrays;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -18,64 +18,38 @@ import rx.schedulers.Schedulers;
 
 public class MovieListInteractor {
 
-    private MoviesListContract.Presenter mIListener;
+    private MoviesListContract.Presenter mPresenter;
 
     /**
      * Init listener action
      *
-     * @param mIListener
+     * @param presenter
      */
-    public MovieListInteractor(MoviesListContract.Presenter mIListener) {
-        this.mIListener = mIListener;
-    }
-
-    /**
-     * Call server resource
-     */
-    public void getMoviesByPopular() {
-        call(new Genre(MovieApp.getInstance().getString(R.string.popular)),
-                RestClient.getMoviesByPopular());
-    }
-
-    /**
-     * Call server resource
-     */
-    public void getMoviesByTopRated() {
-        call(new Genre(MovieApp.getInstance().getString(R.string.top_rated)),
-                RestClient.getMoviesByTopRated());
-    }
-
-    /**
-     * Call server resource
-     */
-    public void getMoviesByUpcoming() {
-        call(new Genre(MovieApp.getInstance().getString(R.string.upcoming)),
-                RestClient.getMoviesByUpcoming());
+    public MovieListInteractor(MoviesListContract.Presenter presenter) {
+        this.mPresenter = presenter;
     }
 
     /**
      * Call server resource common
-     *
-     * @param genre
-     * @param movies
      */
-    private void call(final Genre genre, Observable<MovieResponse> movies) {
-        movies.observeOn(AndroidSchedulers.mainThread())
+    public void call() {
+        Observable.combineLatest(RestClient.getMoviesByPopular(),
+                        RestClient.getMoviesByTopRated(), RestClient.getMoviesByUpcoming(), (a, b, c) -> {
+                            a.setGenre(new Genre(MovieApp.getInstance().getString(R.string.popular)));
+                            b.setGenre(new Genre(MovieApp.getInstance().getString(R.string.top_rated)));
+                            c.setGenre(new Genre(MovieApp.getInstance().getString(R.string.upcoming)));
+                    return Arrays.asList(a, b, c);
+                })
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<MovieResponse>() {
-                    @Override
-                    public void call(MovieResponse movieResponse) {
-                        if (mIListener != null) {
-                            movieResponse.setGenre(genre);
-                            mIListener.onSuccess(movieResponse);
-                        }
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        if (mIListener != null)
-                            mIListener.onFailure(throwable.getMessage());
-                    }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(() -> mPresenter.showSwipeView(true))
+                .doAfterTerminate(() -> mPresenter.showSwipeView(false))
+                .subscribe(movieResponses -> {
+                    if (mPresenter != null)
+                        mPresenter.onSuccess(movieResponses);
+                }, t -> {
+                    if (mPresenter != null)
+                        mPresenter.onFailure(t.getMessage());
                 });
     }
 }

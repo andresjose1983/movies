@@ -4,6 +4,8 @@ import com.test.movies.contract.MoviesListContract;
 import com.test.movies.interactor.MovieListInteractor;
 import com.test.movies.model.MovieResponse;
 
+import java.util.List;
+
 /**
  * Created by andres on 17/03/17.
  */
@@ -22,38 +24,21 @@ public class MovieListPresenter implements MoviesListContract.Presenter {
         mMovieListInteractor = new MovieListInteractor(this);
     }
 
-
     /**
-     *  Get movies by popular
+     * Call server
      */
     @Override
-    public void getMoviesByPopular() {
-        mMovieListInteractor.getMoviesByPopular();
-    }
-
-    /**
-     *  Get movies by Upcoming
-     */
-    @Override
-    public void getMoviesByUpcoming() {
-        mMovieListInteractor.getMoviesByUpcoming();
-    }
-
-    /**
-     * Get movies by TopRated
-     */
-    @Override
-    public void getMoviesByTopRated() {
-        mMovieListInteractor.getMoviesByTopRated();
+    public void call() {
+        mMovieListInteractor.call();
     }
 
     /**
      * Return data request from server
-     * @param movieResponse
+     * @param movieResponses
      */
     @Override
-    public void onSuccess(MovieResponse movieResponse) {
-        mView.showMovies(movieResponse);
+    public void onSuccess(List<MovieResponse> movieResponses) {
+        mView.showMovies(movieResponses);
     }
 
     /**
@@ -63,5 +48,17 @@ public class MovieListPresenter implements MoviesListContract.Presenter {
     @Override
     public void onFailure(String message) {
         mView.showError(message);
+    }
+
+    /**
+     * Show swipe when it is requesting to server
+     * @param show
+     */
+    @Override
+    public void showSwipeView(boolean show) {
+        if(show)
+            mView.showSwipe();
+        else
+            mView.hideSwipe();
     }
 }

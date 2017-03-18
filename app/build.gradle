@@ -16,11 +16,19 @@ android {
         buildConfigField("String",  "URL_IMAGE_POST", '"https://image.tmdb.org/t/p/w640/"')
         buildConfigField("String", "API_KEY", '"7c682b2064fe3a4184e4a5372290c3c8"')
 
+        jackOptions {
+            enabled true
+        }
+
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
         }
     }
 }
