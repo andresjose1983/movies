@@ -4,12 +4,18 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by andres on 16/03/17.
  */
 
-public class Movie implements Serializable {
+public class Movie extends RealmObject implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
+    @PrimaryKey
     private int id;
 
     @SerializedName("backdrop_path")
@@ -35,6 +41,8 @@ public class Movie implements Serializable {
 
     @SerializedName("vote_average")
     private float vote;
+
+    public Movie(){}
 
     public Movie(int id, String backdropPath, String originalLanguage, String originalTitle,
                  String overview, String date, String posterPath, String title, float vote) {

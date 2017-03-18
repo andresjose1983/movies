@@ -1,23 +1,27 @@
 package com.test.movies.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.RealmList;
+import io.realm.RealmObject;
 
 /**
  * Created by andres on 16/03/17.
  */
 
-public class MovieResponse implements Serializable {
+public class MovieResponse extends RealmObject implements Serializable {
 
-    private List<Movie> results = new ArrayList<>();
+    private static final long serialVersionUID = 1L;
+
+    private RealmList<Movie> results;
 
     private Genre genre;
 
     public MovieResponse() {
     }
 
-    public MovieResponse(List<Movie> results) {
+    public MovieResponse(RealmList<Movie> results) {
         this.results = results;
     }
 
@@ -25,7 +29,7 @@ public class MovieResponse implements Serializable {
         return results;
     }
 
-    public void setResults(List<Movie> results) {
+    public void setResults(RealmList<Movie> results) {
         this.results = results;
     }
 
