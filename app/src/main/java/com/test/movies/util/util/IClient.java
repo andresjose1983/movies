@@ -17,7 +17,7 @@ public interface IClient {
      * @param apiKey
      * @return Call<MovieResponse>
      */
-    @GET("popular")
+    @GET("movie/popular")
     Call<MovieResponse> getMoviesByPopular(@Query("api_key") String apiKey);
 
     /**
@@ -25,7 +25,7 @@ public interface IClient {
      * @param apiKey
      * @return Call<MovieResponse>
      */
-    @GET("top_rated")
+    @GET("movie/top_rated")
     Call<MovieResponse> getMoviesByTopRated(@Query("api_key") String apiKey);
 
     /**
@@ -33,7 +33,7 @@ public interface IClient {
      * @param apiKey
      * @return Call<MovieResponse>
      */
-    @GET("upcoming")
+    @GET("movie/upcoming")
     Call<MovieResponse> getMoviesByUpcoming(@Query("api_key") String apiKey);
 
 }
