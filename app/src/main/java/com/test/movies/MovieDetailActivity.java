@@ -14,13 +14,15 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.test.movies.contract.MovieDetailContract;
 import com.test.movies.model.Movie;
+import com.test.movies.presenter.MovieDetailPresenter;
 import com.test.movies.util.util.Functions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity implements MovieDetailContract.View {
 
     public static final String INTENT_DATA = "com.example.andres.movies_test.data.INTENT_DATA";
     @BindView(R.id.tb_movie)
@@ -39,6 +41,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     RatingBar mRbMovie;
 
     int mIdMovie;
+
+    private MovieDetailPresenter mMovieDetailPresenter;
 
     public static void show(final MoviesListActivity moviesListActivity, final Movie movie,
                             final ImageView ivMovie) {
@@ -77,10 +81,23 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         mIdMovie = (int) getIntent().getExtras().get(INTENT_DATA);
 
-        /*Picasso.with(this).load(BuildConfig.URL_IMAGE_POST + movie.getPosterPath())
-                .centerCrop().into(mIvMovie);
+        setSupportActionBar(mTbPhoto);
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        mMovieDetailPresenter = new MovieDetailPresenter(this);
+        mMovieDetailPresenter.getMovieById(mIdMovie);
+    }
+
+    @Override
+    public void showDetail(Movie movie) {
+        Picasso.with(this).load(BuildConfig.URL_IMAGE_POST + movie.getPosterPath())
+                .fit().centerCrop().into(mIvMovie);
         Picasso.with(this).load(BuildConfig.URL_IMAGE_POST + movie.getBackdropPath())
-                .centerCrop().into(mIvMovieIcon);
+                .fit().centerCrop().into(mIvMovieIcon);
 
         mTbPhoto.setTitle(movie.getTitle());
         mTvDate.setText(movie.getDate());
@@ -88,13 +105,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         mTvOverview.setText(movie.getOverview());
         mRbMovie.setRating(movie.getVote());
 
-        Functions.changeRatingColor(mRbMovie);*/
-
-        setSupportActionBar(mTbPhoto);
-        // add back arrow to toolbar
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
+        Functions.changeRatingColor(mRbMovie);
     }
 }

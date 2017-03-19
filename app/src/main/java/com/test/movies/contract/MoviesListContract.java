@@ -1,9 +1,6 @@
 package com.test.movies.contract;
 
-import android.content.Context;
 import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
 
 import com.test.movies.model.Movie;
 import com.test.movies.model.MovieResponse;
@@ -47,6 +44,7 @@ public class MoviesListContract {
 
         /**
          * Goto movie detail
+         *
          * @param movie
          * @param ivMovie
          */
@@ -89,6 +87,7 @@ public class MoviesListContract {
 
         /**
          * Get movie by description
+         *
          * @param description
          */
         void getMovieResponseByDescription(String description);
