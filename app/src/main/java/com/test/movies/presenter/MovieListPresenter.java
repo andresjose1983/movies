@@ -74,4 +74,9 @@ public class MovieListPresenter implements MoviesListContract.Presenter {
     public void getMovieResponse() {
         mMovieListInteractor.getMovieResponse();
     }
+
+    @Override
+    public void getMovieResponseByDescription(String description) {
+        mMovieListInteractor.getMovieResponseByDescription(description);
+    }
 }

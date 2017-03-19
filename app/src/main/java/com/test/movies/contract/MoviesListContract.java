@@ -1,7 +1,11 @@
 package com.test.movies.contract;
 
 import android.content.Context;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
+import com.test.movies.model.Movie;
 import com.test.movies.model.MovieResponse;
 
 import java.util.List;
@@ -40,6 +44,14 @@ public class MoviesListContract {
          * Hide swipe refresh view
          */
         void hideSwipe();
+
+        /**
+         * Goto movie detail
+         * @param movie
+         * @param ivMovie
+         */
+        void gotoMovieDetail(final Movie movie, final ImageView ivMovie);
+
     }
 
     public interface Presenter {
@@ -74,6 +86,12 @@ public class MoviesListContract {
          * Get movie response copy list
          */
         void getMovieResponse();
+
+        /**
+         * Get movie by description
+         * @param description
+         */
+        void getMovieResponseByDescription(String description);
 
     }
 }

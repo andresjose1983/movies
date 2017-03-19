@@ -10,6 +10,7 @@ import com.test.movies.util.util.RestClient;
 import java.util.Arrays;
 import java.util.List;
 
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
@@ -85,6 +86,7 @@ public class MovieListInteractor {
                         // Get a Realm instance for this thread
                         Realm realm = Realm.getDefaultInstance();
                         realm.beginTransaction();
+                        realm.deleteAll();
                         realm.copyToRealmOrUpdate(movieResponses);
                         realm.commitTransaction();
                         realm.close();
@@ -112,6 +114,23 @@ public class MovieListInteractor {
     public void getMovieResponse() {
         Realm realm = Realm.getDefaultInstance();
         realm.where(MovieResponse.class).findAll().asObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<RealmResults<MovieResponse>>() {
+                    @Override
+                    public void call(RealmResults<MovieResponse> movieResponses) {
+                        if (mPresenter != null)
+                            mPresenter.onSuccess(movieResponses);
+                    }
+                });
+    }
+
+    /**
+     * Get movies from databases by description
+     */
+    public void getMovieResponseByDescription(String description) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.where(MovieResponse.class)
+                .like("results.title", description, Case.SENSITIVE).findAll().asObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<RealmResults<MovieResponse>>() {
                     @Override

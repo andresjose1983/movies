@@ -1,8 +1,5 @@
 package com.test.movies.adapter;
 
-import android.graphics.PorterDuff;
-import android.graphics.drawable.LayerDrawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +13,7 @@ import com.test.movies.BuildConfig;
 import com.test.movies.R;
 import com.test.movies.contract.MoviesListContract;
 import com.test.movies.model.Movie;
+import com.test.movies.util.util.Functions;
 
 import java.util.List;
 
@@ -71,23 +69,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIMainView.gotoMovieDetail(mMovies.get(getLayoutPosition()), mIvMovie);
+                }
+            });
 
-            changeRatingColor(mRbMovie);
+            Functions.changeRatingColor(mRbMovie);
         }
     }
 
-    /**
-     * Change star ratng color
-     *
-     * @param ratingBar
-     */
-    public void changeRatingColor(RatingBar ratingBar) {
-        LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
-        stars.getDrawable(2).setColorFilter(ContextCompat.getColor(ratingBar.getContext(),
-                R.color.blue), PorterDuff.Mode.SRC_ATOP);
-        stars.getDrawable(1).setColorFilter(ContextCompat.getColor(ratingBar.getContext(),
-                R.color.blue), PorterDuff.Mode.SRC_ATOP);
-        stars.getDrawable(0).setColorFilter(ContextCompat.getColor(ratingBar.getContext(),
-                R.color.blue), PorterDuff.Mode.SRC_ATOP);
-    }
+
 }
