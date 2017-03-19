@@ -1,5 +1,7 @@
 package com.test.movies.contract;
 
+import android.content.Context;
+
 import com.test.movies.model.MovieResponse;
 
 import java.util.List;
@@ -67,6 +69,11 @@ public class MoviesListContract {
          * @param show
          */
         void showSwipeView(boolean show);
+
+        /**
+         * Get movie response copy list
+         */
+        void getMovieResponse();
 
     }
 }

@@ -3,10 +3,14 @@ package com.test.movies;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.test.movies.adapter.CategoriesAdapter;
 import com.test.movies.contract.MoviesListContract;
 import com.test.movies.model.MovieResponse;
 import com.test.movies.presenter.MovieListPresenter;
@@ -25,6 +29,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
     SwipeRefreshLayout mSrlMovie;
 
     private MovieListPresenter mMovieListPresenter;
+    private CategoriesAdapter mCategoriesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +45,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
 
     @Override
     public void showMovies(List<MovieResponse> movieResponses) {
-        Log.d("Hola", movieResponses.toString());
+        mRvMovie.setAdapter(mCategoriesAdapter = new CategoriesAdapter(this, movieResponses));
     }
 
     /**
@@ -59,6 +64,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
     @Override
     public void showSwipe() {
         mSrlMovie.setRefreshing(true);
+        mSrlMovie.setEnabled(true);
     }
 
     /**
@@ -67,6 +73,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
     @Override
     public void hideSwipe() {
         mSrlMovie.setRefreshing(false);
+        mSrlMovie.setEnabled(false);
     }
 
     /**
@@ -74,6 +81,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
      */
     private void init() {
         mSrlMovie.setColorSchemeResources(R.color.orange, R.color.green, R.color.blue);
-    }
 
+        mRvMovie.setLayoutManager(new LinearLayoutManager(this));
+        mRvMovie.setHasFixedSize(true);
+        mRvMovie.setItemAnimator(new DefaultItemAnimator());
+        mRvMovie.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+    }
 }

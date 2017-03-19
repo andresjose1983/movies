@@ -105,4 +105,20 @@ public class MovieListInteractor {
                     }
                 });
     }
+
+    /**
+     * Get movies from databases
+     */
+    public void getMovieResponse() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.where(MovieResponse.class).findAll().asObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<RealmResults<MovieResponse>>() {
+                    @Override
+                    public void call(RealmResults<MovieResponse> movieResponses) {
+                        if (mPresenter != null)
+                            mPresenter.onSuccess(movieResponses);
+                    }
+                });
+    }
 }

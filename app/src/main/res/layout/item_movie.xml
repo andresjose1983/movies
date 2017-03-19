@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/item_height_big"
+    android:clickable="true"
+    android:foreground="?android:selectableItemBackground"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/iv_movie"
+        android:layout_width="@dimen/image_item_size_big"
+        android:layout_height="@dimen/image_item_size_big"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginStart="@dimen/margin_normal" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/iv_movie"
+        android:layout_toStartOf="@+id/tv_date"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textStyle="bold"
+        tools:text="Title TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitle" />
+
+    <RatingBar
+        android:id="@+id/rb_movie"
+        style="@style/RatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_title"
+        android:layout_centerHorizontal="true"
+        android:layout_toEndOf="@+id/iv_movie"
+        android:isIndicator="true"
+        android:rating="3.5"
+        android:stepSize="0.5" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rb_movie"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/tv_title"
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginStart="@dimen/margin_normal"
+        android:textSize="@dimen/text_small"
+        tools:text="01-01-2018" />
+
+</RelativeLayout>

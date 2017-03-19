@@ -17,6 +17,7 @@ public class MovieListPresenter implements MoviesListContract.Presenter {
 
     /**
      * Init view implementations
+     *
      * @param mView
      */
     public MovieListPresenter(MoviesListContract.View mView) {
@@ -34,6 +35,7 @@ public class MovieListPresenter implements MoviesListContract.Presenter {
 
     /**
      * Return data request from server
+     *
      * @param movieResponses
      */
     @Override
@@ -44,6 +46,7 @@ public class MovieListPresenter implements MoviesListContract.Presenter {
 
     /**
      * Return message from server
+     *
      * @param message
      */
     @Override
@@ -53,13 +56,22 @@ public class MovieListPresenter implements MoviesListContract.Presenter {
 
     /**
      * Show swipe when it is requesting to server
+     *
      * @param show
      */
     @Override
     public void showSwipeView(boolean show) {
-        if(show)
+        if (show)
             mView.showSwipe();
         else
             mView.hideSwipe();
+    }
+
+    /**
+     * Get movie response copy list
+     */
+    @Override
+    public void getMovieResponse() {
+        mMovieListInteractor.getMovieResponse();
     }
 }
