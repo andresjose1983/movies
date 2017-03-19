@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -58,6 +59,14 @@ public class MovieListInteractor {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .onErrorResumeNext(new Func1<Throwable, Observable<? extends List<MovieResponse>>>() {
+                    @Override
+                    public Observable<? extends List<MovieResponse>> call(Throwable throwable) {
+                        Realm realm = Realm.getDefaultInstance();
+                        RealmResults<MovieResponse> movieResponses = realm.where(MovieResponse.class).findAll();
+                        return Observable.just((List<MovieResponse>) movieResponses);
+                    }
+                })
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -78,6 +87,7 @@ public class MovieListInteractor {
                         realm.beginTransaction();
                         realm.copyToRealmOrUpdate(movieResponses);
                         realm.commitTransaction();
+                        realm.close();
                         return movieResponses;
                     }
                 })
