@@ -1,5 +1,7 @@
 package com.test.movies.interactor;
 
+import android.support.annotation.NonNull;
+
 import com.test.movies.MovieApp;
 import com.test.movies.R;
 import com.test.movies.contract.MoviesListContract;
@@ -63,27 +65,6 @@ public class MovieListInteractor {
                     }
                 })
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .onErrorResumeNext(new Func1<Throwable, Observable<? extends List<MovieResponse>>>() {
-                    @Override
-                    public Observable<? extends List<MovieResponse>> call(Throwable throwable) {
-                        Realm realm = Realm.getDefaultInstance();
-                        RealmResults<MovieResponse> movieResponses = realm.where(MovieResponse.class).findAll();
-                        return Observable.just((List<MovieResponse>) movieResponses);
-                    }
-                })
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mPresenter.showSwipeView(true);
-                    }
-                })
-                .doAfterTerminate(new Action0() {
-                    @Override
-                    public void call() {
-                        mPresenter.showSwipeView(false);
-                    }
-                })
                 .map(new Func1<List<MovieResponse>, List<MovieResponse>>() {
                     @Override
                     public List<MovieResponse> call(List<MovieResponse> movieResponses) {
@@ -101,6 +82,25 @@ public class MovieListInteractor {
                         realm.commitTransaction();
                         realm.close();
                         return movieResponses;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorResumeNext(new Func1<Throwable, Observable<? extends List<MovieResponse>>>() {
+                    @Override
+                    public Observable<? extends List<MovieResponse>> call(Throwable throwable) {
+                        return Observable.just(getMovieResponses());
+                    }
+                })
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mPresenter.showSwipeView(true);
+                    }
+                })
+                .doAfterTerminate(new Action0() {
+                    @Override
+                    public void call() {
+                        mPresenter.showSwipeView(false);
                     }
                 })
                 .subscribe(new Action1<List<MovieResponse>>() {
@@ -126,32 +126,67 @@ public class MovieListInteractor {
     }
 
     /**
-     * Get movies from databases by description
+     * @return List<MovieResponse>
      */
-    public void getMovieResponseByDescription(String description) {
+    private List<MovieResponse> getMovieResponses() {
+        Realm realm = Realm.getDefaultInstance();
+        return getMovieResponses(equalTo(where(realm, null), R.string.popular),
+                equalTo(where(realm, null), R.string.top_rated),
+                equalTo(where(realm, null), R.string.upcoming));
+    }
+
+    /**
+     * Commom observable search
+     *
+     * @param description
+     * @return Observable<List<MovieResponse>>
+     */
+    private Observable<List<MovieResponse>> getMovieResponse(String description) {
         final Realm realm = Realm.getDefaultInstance();
 
-        Observable.combineLatest(
-                equalTo(where(realm, description), R.string.popular),
-                equalTo(where(realm, description), R.string.top_rated),
-                equalTo(where(realm, description), R.string.upcoming),
+        return Observable.combineLatest(
+                equalTo(where(realm, description), R.string.popular).asObservable(),
+                equalTo(where(realm, description), R.string.top_rated).asObservable(),
+                equalTo(where(realm, description), R.string.upcoming).asObservable(),
                 new Func3<RealmResults<Movie>, RealmResults<Movie>, RealmResults<Movie>,
                         List<MovieResponse>>() {
                     @Override
                     public List<MovieResponse> call(RealmResults<Movie> movies,
                                                     RealmResults<Movie> movies2,
                                                     RealmResults<Movie> movies3) {
-                        List<MovieResponse> movieResponses = new ArrayList<>();
-                        if (movies.size() > 0)
-                            movieResponses.add(create(movies));
-                        if (movies2.size() > 0)
-                            movieResponses.add(create(movies2));
-                        if (movies3.size() > 0)
-                            movieResponses.add(create(movies3));
-                        return movieResponses;
+                        return getMovieResponses(movies, movies2, movies3);
                     }
                 }
-        ).observeOn(AndroidSchedulers.mainThread())
+        );
+    }
+
+    /**
+     * @param movies
+     * @param movies2
+     * @param movies3
+     * @return List<MovieResponse>
+     */
+    @NonNull
+    private List<MovieResponse> getMovieResponses(RealmResults<Movie> movies,
+                                                  RealmResults<Movie> movies2,
+                                                  RealmResults<Movie> movies3) {
+        List<MovieResponse> movieResponses = new ArrayList<>();
+        if (movies.size() > 0)
+            movieResponses.add(create(movies));
+        if (movies2.size() > 0)
+            movieResponses.add(create(movies2));
+        if (movies3.size() > 0)
+            movieResponses.add(create(movies3));
+        return movieResponses;
+    }
+
+    /**
+     * Get movies from databases by description
+     */
+    public void getMovieResponseByDescription(String description) {
+
+        getMovieResponse(description)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<List<MovieResponse>>() {
                     @Override
                     public void call(List<MovieResponse> movieResponses) {
@@ -196,13 +231,12 @@ public class MovieListInteractor {
     }
 
     /**
-     *
      * @param where
      * @param category
-     * @return Observable<RealmResults<Movie>>
+     * @return RealmResults<Movie>
      */
-    private Observable<RealmResults<Movie>> equalTo(RealmQuery<Movie> where, int category) {
+    private RealmResults<Movie> equalTo(RealmQuery<Movie> where, int category) {
         return where.equalTo("genre.name", MovieApp.getInstance().getString(category))
-                .findAll().asObservable();
+                .findAll();
     }
 }
